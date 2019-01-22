@@ -1,30 +1,11 @@
 const express = require('express');
-const helmet = require('helmet');
-const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const session = require('express-session');
+const protected = require('../config/protected.js');
 
 const db = require('../data/dbConfig.js');
 
 const router = express.Router();
 
-const sessionConfig = {
-    name: 'monkey',
-    secret: 'sfDASF234@$@#$asfas',
-    cookie: {
-        maxAge: 1000 * 60 * 5, // 5 minutes
-        secure: false
-    },
-    httpOnly: true,
-    resave: false,
-    saveUninitialized: false
-};
-
-router.use(helmet());
-router.use(express.json());
-router.use(cors());
-
-router.use(session(sessionConfig));
 
 //routes
 // login route
@@ -64,15 +45,6 @@ router.post('/register', (req, res) => {
         });
 });
 
-
-// middleware to protect the following get route for /users
-function protected(req, res, next) {
-    if (req.session && req.session.user) {
-        next();
-    } else {
-        res.status(401).json({ message: "You must log in for access" });
-    };
-};
 
 // get all users route. This route should be protected so that only authenticated users should see it
 router.get('/users', protected, (req, res) => {

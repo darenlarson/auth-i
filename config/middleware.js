@@ -1,6 +1,6 @@
 const express = require('express');
+const helmet = require('helmet');
 const cors = require('cors');
-const helment = require('helmet');
 const session = require('express-session');
 
 const sessionConfig = {
@@ -15,20 +15,9 @@ const sessionConfig = {
     saveUninitialized: false
 };
 
-
-function protected(req, res, next) {
-    if (req.session && req.session.user) {
-        next();
-    } else {
-        res.status(401).json({ message: "You must log in for access" });
-    };
-};
-
-
 module.exports = server => {
     server.use(express.json()),
+    server.use(helmet()),
     server.use(cors()),
-    server.use(helment()),
-    server.use(session(sessionConfig)),
-    protected()
-};
+    server.use(session(sessionConfig))
+}
